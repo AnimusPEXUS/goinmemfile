@@ -59,6 +59,7 @@ func (self *InMemFile) Read(p []byte) (n int, err error) {
 	}
 
 	res := copy(p, self.Buffer)
+	self.pos += int64(res)
 
 	if res != len(p) {
 		if eof {
@@ -87,6 +88,7 @@ func (self *InMemFile) Write(p []byte) (n int, err error) {
 		}
 	}
 	res := copy(self.Buffer[self.pos:], p)
+	self.pos += int64(res)
 	return res, nil
 }
 
