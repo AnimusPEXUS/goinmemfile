@@ -18,21 +18,21 @@ var _ ReadWriteSeekerCloser = &InMemFile{}
 type InMemFile struct {
 	Buffer              []byte
 	GrowOnWriteOverflow bool
-	// ShortReadNotError bool
+
 	pos    int64
 	closed bool
 }
 
 func NewInMemFileFromBytes(
 	bytes []byte,
+	pos int64,
+	// this emulates normal file behavior
 	GrowOnWriteOverflow bool,
-	// ShortReadNotError bool,
 ) *InMemFile {
 	self := new(InMemFile)
 	self.Buffer = bytes
-	self.pos = 0
+	self.pos = pos
 	self.GrowOnWriteOverflow = GrowOnWriteOverflow
-	// self.ShortReadNotError=ShortReadNotError
 	return self
 }
 
