@@ -2,9 +2,12 @@ package goinmemfile
 
 import (
 	"errors"
+	"fmt"
 	"io"
 	"os"
 )
+
+const debug = false
 
 type ReadWriteSeekerCloser interface {
 	io.Reader
@@ -21,6 +24,8 @@ type InMemFile struct {
 
 	pos    int64
 	closed bool
+
+	debugName string
 }
 
 func NewInMemFileFromBytes(
@@ -32,11 +37,35 @@ func NewInMemFileFromBytes(
 	self := new(InMemFile)
 	self.Buffer = bytes
 	self.pos = pos
+	self.debugName = "[InMemFile]"
 	self.GrowOnWriteOverflow = GrowOnWriteOverflow
 	return self
 }
 
+func (self *InMemFile) SetDebugName(name string) {
+	self.debugName = fmt.Sprintf("[%s]", name)
+}
+
+func (self *InMemFile) DebugPrintln(data ...any) {
+	fmt.Println(append(append([]any{}, self.debugName), data...)...)
+}
+
+func (self *InMemFile) DebugPrintfln(format string, data ...any) {
+	fmt.Println(append(append([]any{}, self.debugName), fmt.Sprintf(format, data...))...)
+}
+
 func (self *InMemFile) Read(p []byte) (n int, err error) {
+
+	if debug {
+		self.DebugPrintfln("Read(%d)", len(b))
+	}
+
+	defer func() {
+		if debug {
+			self.DebugPrintfln("Read defer", n, err)
+
+		}
+	}()
 
 	if self.closed {
 		return 0, os.ErrClosed
