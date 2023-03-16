@@ -7,7 +7,7 @@ import (
 	"os"
 )
 
-const debug = false
+// const debug = false
 
 type ReadWriteSeekerCloser interface {
 	io.Reader
@@ -55,17 +55,6 @@ func (self *InMemFile) DebugPrintfln(format string, data ...any) {
 }
 
 func (self *InMemFile) Read(p []byte) (n int, err error) {
-
-	if debug {
-		self.DebugPrintfln("Read(%d)", len(b))
-	}
-
-	defer func() {
-		if debug {
-			self.DebugPrintfln("Read defer", n, err)
-
-		}
-	}()
 
 	if self.closed {
 		return 0, os.ErrClosed
