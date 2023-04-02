@@ -9,14 +9,14 @@ import (
 
 // const debug = false
 
-type ReadWriteSeekerCloser interface {
+type ReadWriteSeekCloser interface {
 	io.Reader
 	io.Writer
 	io.Closer
 	io.Seeker
 }
 
-var _ ReadWriteSeekerCloser = &InMemFile{}
+var _ ReadWriteSeekCloser = &InMemFile{}
 
 type InMemFile struct {
 	Buffer              []byte
@@ -40,6 +40,12 @@ func NewInMemFileFromBytes(
 	self.debugName = "[InMemFile]"
 	self.GrowOnWriteOverflow = GrowOnWriteOverflow
 	return self
+}
+
+func (self *InMemFile) RO() *InMemFileRO {
+	ret := new(InMemFileRO)
+	ret.InMemFile = self
+	return ret
 }
 
 func (self *InMemFile) SetDebugName(name string) {
@@ -148,4 +154,12 @@ func (self *InMemFile) Seek(offset int64, whence int) (int64, error) {
 
 	self.pos = new_pos
 	return new_pos, nil
+}
+
+type InMemFileRO struct {
+	*InMemFile
+}
+
+func (self *InMemFileRO) Write(p []byte) (n int, err error) {
+	return 0, errors.New("write not allowed. read only")
 }
