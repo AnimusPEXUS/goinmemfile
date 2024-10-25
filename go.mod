@@ -1,3 +1,3 @@
 module github.com/AnimusPEXUS/goinmemfile
 
-go 1.20
+go 1.23.2
